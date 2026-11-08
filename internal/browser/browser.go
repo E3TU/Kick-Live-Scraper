@@ -1,17 +1,25 @@
-package main
+package browser
 
 import (
-	"fmt"
-
 	"github.com/go-rod/rod"
 )
 
-func main() {
-	browser := rod.New().MustConnect()
-	defer browser.MustClose()
+type Browser struct {
+	browser *rod.Browser
+}
 
-	page := browser.MustPage("https://example.com")
+func New() (*Browser, error) {
+	b := rod.New()
+	if err := b.Connect(); err != nil {
+		return nil, err
+	}
+	return &Browser{browser: b}, nil
+}
 
-	fmt.Println(page.MustInfo().Title)
+func (b *Browser) MustPage(url string) *rod.Page {
+	return b.browser.MustPage(url)
+}
 
+func (b *Browser) Close() error {
+	return b.browser.Close()
 }
