@@ -1,24 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
-	"github.com/E3TU/Kick-Live-Scraper/internal/browser"
+	"github.com/E3TU/Kick-Live-Scraper/internal/scraper"
 )
 
 func main() {
-	b, err := browser.New()
-	if err != nil {
-		log.Fatalf("failed to launch browser: %v", err)
-	}
-	defer b.Close()
+	channel := "test"
 
-	page := b.MustPage("https://kick.com")
-	info, err := page.Info()
+	result, err := scraper.Scrape(channel)
 	if err != nil {
-		log.Fatalf("failed to get page info: %v", err)
+		log.Fatalf("scrape failed: %v", err)
 	}
 
-	fmt.Println(info.Title)
+	out, err := json.Marshal(result)
+	if err != nil {
+		log.Fatalf("marshal failed: %v", err)
+	}
+
+	fmt.Println(string(out))
 }
